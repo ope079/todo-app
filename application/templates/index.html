@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+<h2>Incomplete Tasks</h2>
+{% for todo in all_todos %}
+    {% if todo.completed == False %}
+        {{ todo.description }}
+        <br>
+        {{ todo.date_created }}
+        <br>
+        <form action="{{ url_for('update', id=todo.id) }}">
+            <input type=submit value="Update">
+        </form>
+        <form action="{{ url_for('delete', id=todo.id) }}">
+            <input type=submit value="Delete">
+        </form>
+        <br><br>
+    {% endif %}
+{% endfor %}
+
+<h2>Complete Tasks</h2>
+{% for todo in all_todos %}
+    {% if todo.completed == True %}
+        {{ todo.description }}
+        <br>
+        {{ todo.date_created }}
+        <br>
+        <form action="{{ url_for('update', id=todo.id) }}">
+            <input type=submit value="Update">
+        </form>
+        <form action="{{ url_for('delete', id=todo.id) }}">
+            <input type=submit value="Delete">
+        </form>
+        <br><br>
+    {% endif %}
+{% endfor %}
+{% endblock body %}

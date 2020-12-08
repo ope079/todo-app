@@ -1,46 +1,43 @@
 from application import app, db
 from application.models import Todo
-from application.forms import BasicForm
-from flask import Flask, render_template, request
-from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, IntegerField, DecimalField, SelectField, SubmitField
+from application.forms import TaskForm
+from flask import render_template, request, redirect, url_for
+ 
 
-
-
-@app.route('/add/<item>', methods=['POST'])
-def add(item):
-
-    new_todo = Todo(name=item)
-    db.session.add(new_todo)
-    db.session.commit()
-    return render_template('home.html', todos = Todo.query.all())
-
-
-@app.route('/read')
-def read():
+@app.route('/')
+@app.route('/home')
+def home():
     all_todos = Todo.query.all()
     todo_string = ""
-    for todo in all_todos:
-        todo_string +=  str(todo.id) + ". " + str(todo.date) + " "  + todo.name + "<br>"
-    return todo_string
+    return render_template("index.html", title="Home", all_todos=all_todos)
 
-@app.route('/update/<int:id>/<name_update>')
-def update(id, name_update):
-    first_todo = Todo.query.get(id)
-    first_todo.name = name_update
-    db.session.commit()
-    return first_todo.name
+@app.route('/add', methods=['GET','POST'])   
+def add():
+    form = TaskForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            new_todo = Todo(description=form.description.data)
+            db.session.add(new_todo)
+            db.session.commit()
+            return redirect(url_for("home"))
+    return render_template("add.html", title="Add a task", form=form)
 
-@app.route('/delete/<int:id>')
+@app.route('/update/<int:id>',  methods=['GET','POST'])
+def update(id):
+    form = TaskForm()
+    todo = Todo.query.filter_by(id=id).first()
+    if request.method =="POST":
+        todo.description = form.description.data
+        db.session.commit()
+        return redirect(url_for("home"))
+    return render_template("update.html", form=form, title="Update Todo", todo=todo)
+
+@app.route('/delete/<int:id>', methods=['GET','POST'])
 def delete(id):
-    first_todo = Todo.query.get(id)
-    db.session.delete(first_todo)
+    todo = Todo.query.filter_by(id=id).first()
+    db.session.delete(todo)
     db.session.commit()
-    all_todos = Todo.query.all()
-    todo_string = ""
-    for todo in all_todos:
-        todo_string +=  str(todo.id) + ". " + str(todo.date) + " " + todo.name + "<br>"
-    return todo_string
+    return redirect(url_for("home"))
 
 @app.route('/count')
 def count():

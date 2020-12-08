@@ -1,10 +1,7 @@
-from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, IntegerField, DecimalField, SelectField, SubmitField
+from wtforms.validators import DataRequired
 
-class BasicForm(FlaskForm):
-    date_field = DateField('Enter Date')
-    name_field = StringField('Enter Todo Name')
-    description_field = StringField('Describe Todo')
-    completed_field = SelectField('Completed', choices= [('y', 'Yes'), ('n', 'No')])
-    submit = SubmitField('Submit Todo')
+class TaskForm(FlaskForm):
+    description = StringField('Description of Task', validators=[DataRequired()])
+    submit = SubmitField('Add the Task')
