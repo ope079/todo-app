@@ -1,19 +1,27 @@
 from application import app, db
 from application.models import Todo
+from application.forms import BasicForm
+from flask import Flask, render_template, request
+from flask_wtf import FlaskForm
+from wtforms import StringField, DateField, IntegerField, DecimalField, SelectField, SubmitField
 
-@app.route('/add/<item>')
+
+
+@app.route('/add/<item>', methods=['POST'])
 def add(item):
+
     new_todo = Todo(name=item)
     db.session.add(new_todo)
     db.session.commit()
-    return item 
+    return render_template('home.html', todos = Todo.query.all())
+
 
 @app.route('/read')
 def read():
     all_todos = Todo.query.all()
     todo_string = ""
     for todo in all_todos:
-        todo_string += str(todo.id) + ". " + todo.name + "<br>"
+        todo_string +=  str(todo.id) + ". " + str(todo.date) + " "  + todo.name + "<br>"
     return todo_string
 
 @app.route('/update/<int:id>/<name_update>')
@@ -31,7 +39,7 @@ def delete(id):
     all_todos = Todo.query.all()
     todo_string = ""
     for todo in all_todos:
-        todo_string += str(todo.id) + ". " + todo.name + "<br>"
+        todo_string +=  str(todo.id) + ". " + str(todo.date) + " " + todo.name + "<br>"
     return todo_string
 
 @app.route('/count')
