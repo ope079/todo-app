@@ -11,6 +11,22 @@ def home():
     todo_string = ""
     return render_template("index.html", title="Home", all_todos=all_todos)
 
+
+@app.route('/complete/<int:id>', methods=['POST'])
+def complete(id):
+    todo = Todo.query.filter_by(id=id).first()
+    todo.completed = True
+    db.session.commit()
+    return redirect(url_for("home"))
+
+@app.route('/incomplete/<int:id>', methods=['POST'])
+def incomplete(id):
+    todo = Todo.query.filter_by(id=id).first()
+    todo.completed = False
+    db.session.commit()
+    return redirect(url_for("home"))
+
+
 @app.route('/add', methods=['GET','POST'])   
 def add():
     form = TaskForm()
@@ -39,10 +55,3 @@ def delete(id):
     db.session.commit()
     return redirect(url_for("home"))
 
-@app.route('/count')
-def count():
-    all_todos = Todo.query.all()
-    todo_count = 0
-    for i in range(len(all_todos)+1):
-        todo_count =+ i
-    return str(todo_count)
