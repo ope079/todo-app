@@ -48,7 +48,7 @@ def update(id):
         return redirect(url_for("home"))
     return render_template("update.html", form=form, title="Update Todo", todo=todo)
 
-@app.route('/delete/<int:id>', methods=['GET','POST'])
+@app.route('/delete/<int:id>')
 def delete(id):
     todo = Todo.query.filter_by(id=id).first()
     db.session.delete(todo)
