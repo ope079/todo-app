@@ -12,14 +12,14 @@ def home():
     return render_template("index.html", title="Home", all_todos=all_todos)
 
 
-@app.route('/complete/<int:id>', methods=['POST'])
+@app.route('/complete/<int:id>', methods=['GET','POST'])
 def complete(id):
     todo = Todo.query.filter_by(id=id).first()
     todo.completed = True
     db.session.commit()
     return redirect(url_for("home"))
 
-@app.route('/incomplete/<int:id>', methods=['POST'])
+@app.route('/incomplete/<int:id>', methods=['GET','POST'])
 def incomplete(id):
     todo = Todo.query.filter_by(id=id).first()
     todo.completed = False
